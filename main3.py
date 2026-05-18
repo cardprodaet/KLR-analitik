@@ -26,8 +26,9 @@ PRICES_BASE    = 'https://discounts-prices-api.wb.ru'
 CONTENT_BASE   = 'https://suppliers-api.wildberries.ru'
 MARKET_BASE    = 'https://marketplace-api.wildberries.ru'
 
-PAGE_SLEEP  = 20
-WRITE_BATCH = 500
+PAGE_SLEEP    = 20
+FUNNEL_SLEEP  = 90
+WRITE_BATCH   = 500
 
 logging.basicConfig(
     level=logging.INFO,
@@ -344,7 +345,7 @@ def main() -> None:
         ('Воронка Месяц',   month_from,  yesterday),
     ]:
         load_funnel_period(api_key, df, dt, ss, sheet_name)
-        time.sleep(10)
+        time.sleep(FUNNEL_SLEEP)
 
     load_prices(api_key, ss);    time.sleep(10)
     load_cards(api_key, ss);     time.sleep(10)
