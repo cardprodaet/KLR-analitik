@@ -24,6 +24,9 @@ jobs:
     - name: Create credentials file
       run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
 
+    - name: Setup — создание листов
+      run: python setup_sheets.py
+
     - name: Part 1 — Продажи, Заказы, Остатки, Финансы
       run: python main1.py
 
