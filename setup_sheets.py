@@ -49,17 +49,14 @@ def main():
             print(f'  ✅ создан: {name}')
             created += 1
 
-    # Настройки — добавляем подсказку для API ключа
+    # Настройки — добавляем заголовок только если A1 пустая (не трогаем B2 с API ключом)
     try:
         ws = ss.worksheet('Настройки')
-        if ws.acell('A2').value != 'API ключ WB':
-            ws.update(values=[
-                ['Параметр', 'Значение'],
-                ['API ключ WB', '← вставь сюда API ключ'],
-            ], range_name='A1')
-            print('  ✅ Настройки: добавлена подсказка')
+        if not ws.acell('A1').value:
+            ws.update(values=[['Параметр', 'Значение'], ['API ключ WB', '']], range_name='A1')
+            print('  Настройки: добавлены заголовки (B2 не тронут)')
     except Exception as e:
-        print(f'  ⚠️ Настройки: {e}')
+        print(f'  Настройки: {e}')
 
     print(f'\nГотово! Создано листов: {created}, уже существовало: {len(SHEETS) - created}')
     print('Теперь вставь API ключ в лист Настройки → ячейка B2')
