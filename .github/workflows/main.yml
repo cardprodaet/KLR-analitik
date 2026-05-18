@@ -1,0 +1,38 @@
+name: KLR Analytics Daily Update
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 01:00 UTC = 04:00 МСК
+  workflow_dispatch:       # ручной запуск из GitHub UI
+
+jobs:
+  update-all:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Create credentials file
+      run: echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+
+    - name: Part 1 — Продажи, Заказы, Остатки, Финансы
+      run: python main1.py
+
+    - name: Part 2 — РК периоды, НМ-отчёт
+      run: python main2.py
+
+    - name: Part 3 — Воронка периоды, Цены, Карточки, Поставки
+      run: python main3.py
+
+    - name: Remove credentials file
+      if: always()
+      run: rm -f credentials.json
