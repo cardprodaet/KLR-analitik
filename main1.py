@@ -39,7 +39,10 @@ def get_spreadsheet() -> gspread.Spreadsheet:
     return gspread.authorize(creds).open_by_key(SPREADSHEET_ID)
 
 def get_api_key(ss: gspread.Spreadsheet) -> str:
-    return ss.worksheet('Настройки').acell('B2').value.strip()
+    val = ss.worksheet('Настройки').acell('B2').value
+    if not val or not val.strip():
+        raise RuntimeError('API ключ WB не найден в ячейке B2 листа Настройки')
+    return val.strip()
 
 def set_status(ss: gspread.Spreadsheet, name: str, status: str) -> None:
     try:

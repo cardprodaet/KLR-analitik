@@ -42,7 +42,10 @@ def get_spreadsheet() -> gspread.Spreadsheet:
     return gspread.authorize(creds).open_by_key(SPREADSHEET_ID)
 
 def get_api_key(ss: gspread.Spreadsheet) -> str:
-    return ss.worksheet('Настройки').acell('B2').value.strip()
+    val = ss.worksheet('Настройки').acell('B2').value
+    if not val or not val.strip():
+        raise RuntimeError('API ключ WB не найден в ячейке B2 листа Настройки')
+    return val.strip()
 
 def set_status(ss: gspread.Spreadsheet, name: str, status: str) -> None:
     try:
@@ -281,10 +284,12 @@ def main() -> None:
     api_key = get_api_key(ss)
 
     today       = datetime.now()
-    yesterday   = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+    yesterday   = today - timedelta(days=1)
+    month_first = today.replace(day=1)
+    month_from  = min(month_first, yesterday).strftime('%Y-%m-%d')
+    yesterday   = yesterday.strftime('%Y-%m-%d')
     week_from   = (today - timedelta(days=7)).strftime('%Y-%m-%d')
     days14_from = (today - timedelta(days=14)).strftime('%Y-%m-%d')
-    month_from  = today.replace(day=1).strftime('%Y-%m-%d')
 
     campaign_ids = get_campaigns(api_key)
     if not campaign_ids:

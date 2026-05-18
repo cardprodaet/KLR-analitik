@@ -49,12 +49,16 @@ def main():
             print(f'  ✅ создан: {name}')
             created += 1
 
-    # Настройки — добавляем заголовок только если A1 пустая (не трогаем B2 с API ключом)
+    # Настройки — только колонка A, B никогда не трогаем
     try:
         ws = ss.worksheet('Настройки')
         if not ws.acell('A1').value:
-            ws.update(values=[['Параметр', 'Значение'], ['API ключ WB', '']], range_name='A1')
-            print('  Настройки: добавлены заголовки (B2 не тронут)')
+            ws.update(values=[['Параметр']], range_name='A1')
+        if not ws.acell('A2').value:
+            ws.update(values=[['API ключ WB']], range_name='A2')
+        if not ws.acell('B1').value:
+            ws.update(values=[['Значение']], range_name='B1')
+        print('  Настройки: заголовки проверены')
     except Exception as e:
         print(f'  Настройки: {e}')
 
