@@ -22,12 +22,12 @@ SCOPES = [
 ]
 
 ANALYTICS_BASE = 'https://seller-analytics-api.wildberries.ru'
-PRICES_BASE    = 'https://discounts-prices-api.wb.ru'
-CONTENT_BASE   = 'https://suppliers-api.wildberries.ru'
+PRICES_BASE    = 'https://discounts-prices-api.wildberries.ru'
+CONTENT_BASE   = 'https://content-api.wildberries.ru'
 MARKET_BASE    = 'https://marketplace-api.wildberries.ru'
 
 PAGE_SLEEP    = 20
-FUNNEL_SLEEP  = 90
+FUNNEL_SLEEP  = 180
 WRITE_BATCH   = 500
 
 logging.basicConfig(
@@ -83,6 +83,9 @@ def wb_request(method: str, url: str, api_key: str, max_retries: int = 5, **kwar
             resp = getattr(requests, method)(url, headers=headers, timeout=60, **kwargs)
             if resp.status_code == 200:
                 return resp
+            if resp.status_code == 401:
+                log.error('HTTP 401 — token scope not allowed, skipping')
+                return None
             if resp.status_code == 429:
                 wait = 60 * attempt
                 log.warning('429 rate limit (attempt %d/%d) — sleeping %ds', attempt, max_retries, wait)
