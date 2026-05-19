@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import gspread
 import requests
 from google.oauth2.service_account import Credentials
+from gspread.utils import rowcol_to_a1
 
 SPREADSHEET_ID   = '1SOLbCBhGcnsrwiW9JSiw0wH3YMQZcVMWYh_sNovXQjI'
 CREDENTIALS_FILE = 'credentials.json'
@@ -54,6 +55,18 @@ def set_status(ss: gspread.Spreadsheet, name: str, status: str) -> None:
     except Exception as exc:
         log.warning('set_status error: %s', exc)
 
+def format_header(ws: gspread.Worksheet, num_cols: int) -> None:
+    last_cell = rowcol_to_a1(1, num_cols)
+    ws.format(f'A1:{last_cell}', {
+        'backgroundColor': {'red': 0.122, 'green': 0.306, 'blue': 0.475},
+        'textFormat': {
+            'bold': True,
+            'foregroundColor': {'red': 1.0, 'green': 1.0, 'blue': 1.0},
+        },
+        'horizontalAlignment': 'CENTER',
+    })
+    ws.freeze(rows=1)
+
 def write_sheet(ss: gspread.Spreadsheet, name: str, rows: list[list]) -> None:
     ws = ss.worksheet(name)
     ws.clear()
@@ -65,6 +78,8 @@ def write_sheet(ss: gspread.Spreadsheet, name: str, rows: list[list]) -> None:
         else:
             ws.append_rows(chunk)
         time.sleep(2)
+    if rows:
+        format_header(ws, len(rows[0]))
     log.info('%s → %d rows written', name, len(rows) - 1)
 
 # ── HTTP ───────────────────────────────────────────────────────────────────────
