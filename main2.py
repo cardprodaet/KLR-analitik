@@ -316,10 +316,11 @@ def main() -> None:
         log.info('Загружаем fullstats за месяц...')
         month_stats = fetch_fullstats(api_key, campaign_ids, month_from, yesterday)
         time.sleep(5)
+        days14_to = (today - timedelta(days=8)).strftime('%Y-%m-%d')
         for sheet_name, df, dt in [
             ('РК День',    yesterday,   yesterday),
             ('РК Неделя',  week_from,   yesterday),
-            ('РК 14 Дней', days14_from, yesterday),
+            ('РК 14 Дней', days14_from, days14_to),
             ('РК Месяц',   month_from,  yesterday),
         ]:
             write_rk_period(month_stats, df, dt, ss, sheet_name)
