@@ -1,9 +1,7 @@
 name: KLR Analytics Daily Update
 
 on:
-  schedule:
-    - cron: '0 1 * * *'   # 01:00 UTC = 04:00 МСК
-  workflow_dispatch:       # ручной запуск из GitHub UI
+  workflow_dispatch:       # только ручной запуск — авторасписание отключено (экономия API-лимитов WB)
 
 jobs:
   update-all:
